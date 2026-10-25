@@ -1,0 +1,106 @@
+buildscript {
+    repositories {
+        maven { url = 'https://maven.aliyun.com/repository/public' }
+        maven { url = 'https://maven.minecraftforge.net/' }
+        mavenCentral()
+    }
+    dependencies { classpath 'net.minecraftforge.gradle:ForgeGradle:6.0.54' }
+}
+apply plugin: 'net.minecraftforge.gradle'
+
+version = '1.1.0'
+group = 'cn.pixelmc.feedingcarrotcompat'
+base { archivesName = 'feedingcarrotcompat-forge-1.20.1' }
+java { toolchain { languageVersion = JavaLanguageVersion.of(17) } }
+sourceSets {
+    gametest {
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+    enigmaticfix {
+        compileClasspath += sourceSets.main.compileClasspath
+    }
+    uismoke {
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+}
+
+minecraft {
+    mappings channel: 'official', version: '1.20.1'
+    copyIdeResources = true
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'info'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            mods { feedingcarrotcompat { source sourceSets.main } }
+        }
+        client {}
+        uiSmokeClient {
+            parent minecraft.runs.client
+            client true
+            mods { feedingcarrotcompat { source sourceSets.uismoke } }
+        }
+        server { args '--nogui' }
+        gameTestServer {
+            property 'forge.enabledGameTestNamespaces', 'feedingcarrotcompat'
+            mods { feedingcarrotcompat { source sourceSets.gametest } }
+        }
+    }
+}
+
+repositories {
+    flatDir { dirs 'references' }
+    maven { name = 'AliyunPublic'; url = 'https://maven.aliyun.com/repository/public' }
+    maven { name = 'BMCLAPIForge'; url = 'https://bmclapi2.bangbang93.com/maven' }
+}
+repositories.configureEach { repo ->
+    if (repo instanceof MavenArtifactRepository) {
+        def host = repo.url.host
+        if (host == 'maven.minecraftforge.net' || host == 'libraries.minecraft.net')
+            repo.url = 'https://bmclapi2.bangbang93.com/maven'
+        if (host == 'repo.maven.apache.org' || host == 'repo1.maven.org')
+            repo.url = 'https://maven.aliyun.com/repository/public'
+    }
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.20.1-47.3.33'
+    compileOnly files('references/LetMeFeedYou-forge-1.20.1-1.0.0.jar')
+    runtimeOnly fg.deobf('reference:LetMeFeedYou-forge-1.20.1:1.0.0')
+    runtimeOnly fg.deobf('reference:solcarrot-1.20.1:1.15.1')
+    runtimeOnly fg.deobf('reference:curtain-mc1.20.1:1.3.2')
+    gametestCompileOnly files('references/solcarrot-1.20.1-1.15.1.jar')
+    enigmaticfixCompileOnly 'org.spongepowered:mixin:0.8.5'
+}
+
+tasks.named('compileEnigmaticfixJava', JavaCompile).configure {
+    options.compilerArgs += ['-proc:none']
+}
+tasks.register('enigmaticFixJar', Jar) {
+    archiveBaseName = 'pixelmc-enigmatic-startup-fix-forge-1.20.1'
+    archiveVersion = '1.0.0'
+    from sourceSets.enigmaticfix.output
+    manifest {
+        attributes(['MixinConfigs': 'pixelmc-enigmatic-startup-fix.mixins.json', 'Implementation-Version': '1.0.0'])
+    }
+}
+tasks.named('assemble').configure { dependsOn 'enigmaticFixJar' }
+
+tasks.named('jar', Jar).configure {
+    manifest { attributes(['Implementation-Version': project.version]) }
+    finalizedBy 'reobfJar'
+}
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+tasks.withType(net.minecraftforge.gradle.common.tasks.DownloadAssets).configureEach {
+    assetRepository = 'https://bmclapi2.bangbang93.com/assets/'
+}
+
+// Preserve the project's license and original-author notice in every published JAR.
+tasks.withType(Jar).configureEach {
+    from(rootProject.file('LICENSE')) { into 'META-INF/pixelmc' }
+    from(rootProject.file('NOTICE')) { into 'META-INF/pixelmc' }
+    from(rootProject.file('LICENSE-EXCEPTION.md')) { into 'META-INF/pixelmc' }
+}

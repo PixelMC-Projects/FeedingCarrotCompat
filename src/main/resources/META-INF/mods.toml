@@ -1,0 +1,33 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="AGPL-3.0-only"
+[[mods]]
+modId="feedingcarrotcompat"
+version="1.1.0"
+displayName="Feeding Carrot Compat"
+authors="PixelMC / Codex"
+description='''Hold-to-feed with recipient-owned player permissions, an unbound settings key, and SOL Carrot food progression support.'''
+[[dependencies.feedingcarrotcompat]]
+modId="forge"
+mandatory=true
+versionRange="[47.3.33,48)"
+ordering="NONE"
+side="BOTH"
+[[dependencies.feedingcarrotcompat]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.20.1]"
+ordering="NONE"
+side="BOTH"
+[[dependencies.feedingcarrotcompat]]
+modId="letmefeedyou"
+mandatory=true
+versionRange="[1.20.1-1.0.0]"
+ordering="AFTER"
+side="BOTH"
+[[dependencies.feedingcarrotcompat]]
+modId="solcarrot"
+mandatory=true
+versionRange="[1.15.1]"
+ordering="AFTER"
+side="BOTH"

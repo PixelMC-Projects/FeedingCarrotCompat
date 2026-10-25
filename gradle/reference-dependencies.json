@@ -1,0 +1,17 @@
+[
+  {
+    "file": "curtain-mc1.20.1-1.3.2.jar",
+    "sha256": "4588eae4f97b1889b682524457018f3df3dd9d0b2112c330ad112dc051cae03a",
+    "upstream": "https://cdn.modrinth.com/data/2Vw36Ezz/versions/4gKjMbeX/curtain-mc1.20.1-1.3.2.jar"
+  },
+  {
+    "file": "LetMeFeedYou-forge-1.20.1-1.0.0.jar",
+    "sha256": "cc6d1071c9dcf5e2ea2adc02e47666e4f1a00f9b1fd05ce2152a7248bdf3602b",
+    "upstream": "https://cdn.modrinth.com/data/WkBD5Cw5/versions/W9bHKSOW/LetMeFeedYou-forge-1.20.1-1.0.0.jar"
+  },
+  {
+    "file": "solcarrot-1.20.1-1.15.1.jar",
+    "sha256": "629d6744c8d856c51c74c66eba4c252c6d62d392dbaf5b24ea690cd8f081e679",
+    "upstream": "https://www.curseforge.com/minecraft/mc-mods/spice-of-life-carrot-edition/files"
+  }
+]
